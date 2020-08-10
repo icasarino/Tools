@@ -1,13 +1,13 @@
 ip=$1
-echo "Running nmap -O -Pn -p- -T4 ${ip} output on nmapPorts"
-nmap -O -Pn -p- -T4 $ip -oN nmapPorts
-echo "Getting open ports"
+echo -e "\nRunning nmap -O -q -Pn -p- -T4 ${ip} output on nmapPorts\n"
+nmap -O -q -Pn -p- -T4 $ip -oN nmapPorts
+echo "\nGetting open ports\n"
 ports=$(grep -oe [0-9]*.tcp nmapPorts | sed s:/tcp::g | sed s:\n:,:g | sed ':a;N;$!ba;s/\n/,/g')
-if[$ports = ""] 
+if test -z "$ports" 
 then
-	echo "No open ports found"
+	echo -e "\nNo open ports found\n"
 else
-	echo "Found open ports: ${ports}"
-	echo "Running nmap -sV -T3 -p${ports} ${ip} output on nmapPorts"
-	nmap -sV -T3 -p$ports $ip -oN versionOP
+	echo -e "\nFound open ports: ${ports}\n"
+	echo -e "\nRunning nmap -sV -T3 -p$ports $ip output on nmapPorts\n"
+	nmap -sV -q -T3 -p$ports $ip -oN versionOP
 fi
